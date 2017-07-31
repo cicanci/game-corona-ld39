@@ -7,7 +7,8 @@
 display.setStatusBar(display.HiddenStatusBar)
 
 local physics = require "physics"
-physics.start();
+physics.start()
+physics.setGravity(0, 0)
 
 local movementX = 0
 local movementY = 0
@@ -15,8 +16,8 @@ local speed = 4
 local lastMovement = -speed
 
 local bulletSpeed = 100
-local bulletCounter = 0;
-local bulletRate = 5;
+local bulletCounter = 0
+local bulletRate = 5
 
 local farBackground = display.newGroup()
 local nearBackground = display.newGroup()
@@ -39,7 +40,19 @@ foreground:insert(player)
 local monster = display.newImage("content/monster.png")
 monster.x = (display.contentWidth * 0.5) - 100
 monster.y = display.contentHeight * 0.5
+monster.gravityScale = 0
+physics.addBody(monster)
 foreground:insert(monster)
+
+-- Local collision handling
+local function onLocalCollision(self, event)
+  print(event.target)        --the first object in the collision
+  print(event.other)         --the second object in the collision
+  print(event.selfElement)   --the element (number) of the first object which was hit in the collision
+  print(event.otherElement)  --the element (number) of the second object which was hit in the collision
+end
+monster.collision = onLocalCollision
+monster:addEventListener("collision")
 
 local function playerShoot()
   if (bulletCounter < bulletRate) then
