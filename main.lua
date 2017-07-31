@@ -34,6 +34,12 @@ player.x = display.contentWidth * 0.5
 player.y = display.contentHeight * 0.5
 foreground:insert(player)
 
+-- Monster
+local monster = display.newImage("content/monster.png")
+monster.x = (display.contentWidth * 0.5) - 100
+monster.y = display.contentHeight * 0.5
+foreground:insert(monster)
+
 local function playerShoot()
   if (bulletCounter < bulletRate) then
     bulletCounter = bulletCounter + 1
