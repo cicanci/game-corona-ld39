@@ -11,9 +11,10 @@ physics.start();
 
 local movementX = 0
 local movementY = 0
-local speed = 2
+local speed = 4
+local lastMovement = -speed
 
-local bulletSpeed = 200
+local bulletSpeed = 100
 local bulletCounter = 0;
 local bulletRate = 5;
 
@@ -49,7 +50,7 @@ local function playerShoot()
 
   local bullet = display.newImage("content/bullet.png")
   bullet.type = "bullet"
-  if (movementX > 0) then
+  if (lastMovement > 0) then
     bullet.x = player.x + 40
   else
     bullet.x = player.x - 40
@@ -64,7 +65,7 @@ local function playerShoot()
   physics.addBody(bullet, "dynamic")
   bullet.gravityScale = 0
   bullet.isBullet = true
-  bullet:setLinearVelocity(movementX * bulletSpeed, 0)
+  bullet:setLinearVelocity(lastMovement * bulletSpeed, 0)
 end
 
 local function playerAction(event)
@@ -75,9 +76,7 @@ local function playerAction(event)
     player.y = player.y + movementY
   end
 
-  if ((movementX ~= 0) and (movementY ~= 0)) then
-    playerShoot()
-  end
+  playerShoot()
 end
 Runtime:addEventListener("enterFrame", playerAction)
 
@@ -95,6 +94,7 @@ local function onTouchScreen(event)
     else
       movementY = -speed
     end
+    lastMovement = movementX
   else --ended or cancelled
     movementX = 0
     movementY = 0
