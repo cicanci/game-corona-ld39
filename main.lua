@@ -8,12 +8,14 @@ display.setStatusBar(display.HiddenStatusBar)
 
 local physics = require "physics"
 physics.start();
---physics.setGravity(0, 9.8)
 
 local movementX = 0
 local movementY = 0
 local speed = 2
+
 local bulletSpeed = 200
+local bulletCounter = 0;
+local bulletRate = 5;
 
 local farBackground = display.newGroup()
 local nearBackground = display.newGroup()
@@ -33,7 +35,14 @@ player.y = display.contentHeight * 0.5
 foreground:insert(player)
 
 local function playerShoot()
+  if (bulletCounter < bulletRate) then
+    bulletCounter = bulletCounter + 1
+    return
+  end
+  bulletCounter = 0
+
   local bullet = display.newImage("content/bullet.png")
+  bullet.type = "bullet"
   if (movementX > 0) then
     bullet.x = player.x + 40
   else
@@ -42,7 +51,7 @@ local function playerShoot()
   if (movementY > 0) then
     bullet.y = player.y - 4
   else
-    bullet.y = player.y - 12
+    bullet.y = player.y - 10
   end
   nearBackground:insert(bullet)
 
@@ -59,11 +68,15 @@ local function playerAction(event)
   if (movementY ~= 0) then
     player.y = player.y + movementY
   end
+
+  if ((movementX ~= 0) and (movementY ~= 0)) then
+    playerShoot()
+  end
 end
 Runtime:addEventListener("enterFrame", playerAction)
 
 local function onTouchScreen(event)
-  if (event.phase == "began") then
+  if ((event.phase == "began") or (event.phase == "moved")) then
     if (event.x > display.contentCenterX) then
       movementX = speed
       player.xScale = -1
@@ -76,8 +89,7 @@ local function onTouchScreen(event)
     else
       movementY = -speed
     end
-    playerShoot()
-  elseif (event.phase == "ended") then
+  else --ended or cancelled
     movementX = 0
     movementY = 0
   end
